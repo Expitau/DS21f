@@ -31,17 +31,19 @@ public class ArrayPolynomial {
   private void cleanup(){
     if(poly.size() == 0) return;
     Collections.sort(poly);
-    Integer r = -1, sum = 0;
-    for(int i=0; i<this.poly.size(); i++){
-      if(r == -1 || this.poly.get(r).exp != this.poly.get(i).exp){
-        r++;
+    Integer r = 0;
+    for(int i=1; i<this.poly.size(); i++){
+      if(this.poly.get(r).getExp() != this.poly.get(i).getExp()){
+        if(poly.get(r).getCoef() != 0) r++;
         this.poly.set(r, poly.get(i));
       }else{
         Pair next = this.poly.get(r).getAdd(poly.get(i));
         this.poly.set(r, next);
       }
     }
-    if(r+1 < this.poly.size()) this.poly.subList(r+1, poly.size()).clear();
+    if(this.poly.get(r).getCoef() != 0) r++;
+    
+    if(r < this.poly.size()) this.poly.subList(r, this.poly.size()).clear();
   }
 
   // Print the terms of 'this' polynomial in decreasing order of exponents.
@@ -54,7 +56,7 @@ public class ArrayPolynomial {
 
 // storeing single term of polynomial
 class Pair implements Comparable<Pair> {
-  Integer exp, coef;
+  private Integer exp, coef;
   public Pair(){
     exp = 0;
     coef = 0;
