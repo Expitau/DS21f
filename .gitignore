@@ -24,3 +24,12 @@ hs_err_pid*
 
 # goorm ide
 goorm.manifest
+
+# IntelliJ IDEA
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
