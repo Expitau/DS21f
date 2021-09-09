@@ -16,14 +16,14 @@ For this programming assignment, we design an abstract data type (ADT) for singl
 
 ## My Implementation
 
-I made two version of Polynomial class, `ArrayPolynomial` and `MapPolynomial`.
+I made two version of Polynomial class, `Polynomial` and `MapPolynomial`.
 
-First, `ArrayPolynomial` uses ArrayList to store data and directrly push data given by constructor, `add` and `sub` methods.
+First, `Polynomial` uses ArrayList to store data and directrly push data given by constructor, `add` and `sub` methods.
 And there are method, `cleanup`, which make unique ArrayList given by above Requirements. So in `print` method calls `cleanup` before print polynomial.
 
 Second, `MapPolynomial` uses map and obviously, it uses Exp as key and Coef as value. `add`and `sub` call `add_once` for each of operender's element.
 
-`Polynomial` class inherit `ArrayPolynomial` because `MainPoly` only call `print` onec but `add` and `sub` many time.
+I decided to make `Polynomial` with ArrayList because `MainPoly` only call `print` onec but `add` and `sub` many time.
 
 So total time complexity is O(n log n) and space complexity is O(n)
 
