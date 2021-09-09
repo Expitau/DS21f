@@ -31,7 +31,7 @@ public class ArrayPolynomial {
   private void cleanup(){
     if(poly.size() == 0) return;
     Collections.sort(poly);
-    Integer r = 0;
+    int r = 0;
     for(int i=1; i<this.poly.size(); i++){
       if(this.poly.get(r).getExp() != this.poly.get(i).getExp()){
         if(poly.get(r).getCoef() != 0) r++;
@@ -56,7 +56,7 @@ public class ArrayPolynomial {
 
 // storeing single term of polynomial
 class Pair implements Comparable<Pair> {
-  private Integer exp, coef;
+  private int exp, coef;
   public Pair(){
     exp = 0;
     coef = 0;
@@ -66,10 +66,10 @@ class Pair implements Comparable<Pair> {
     coef = C;
   }
   
-  public Integer getExp(){
+  public int getExp(){
     return this.exp;
   }
-  public Integer getCoef(){
+  public int getCoef(){
     return this.coef;
   }
   
