@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 
 import java.io.IOException;
@@ -27,10 +29,10 @@ class MainPolyTest{
   public void cleanUpStreams() {
     System.setOut(null);
   }
-
-  @Test
-  void main() throws IOException{
-    String fileNo = "01";
+  
+  @ParameterizedTest
+  @ValueSource(strings = {"01", "02", "03", "04", "05", "06", "07", "08", "09"})
+  void test_file(String fileNo) throws IOException{
     String inputFile = "./public/test" + fileNo;
     String outputFile = "./public/test" + fileNo + ".out";
 
