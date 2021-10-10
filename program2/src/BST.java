@@ -14,63 +14,76 @@ public class BST { // Binary Search Tree implementation
     totFreq = 0;
   }
 
-  public int size() {
-    return totSize;
+  // Tree node operation
+  protected Node makeNewNode(String key){
+    return new Node(key);
+  }
+  protected void increaseFrequency(Node node){
+    node.increaseFrequency();
   }
 
-  public void insert(String key) {
-    totFreq++;
-    if(root == null){
-      root = new Node(key);
-      totSize++;
-      return;
-    }
-    Node nowNode = root;
-    while(true){
-      switch(key.compareTo(nowNode.getKey())){
-        case -1:
-          if(nowNode.left == null){
-            nowNode.left = new Node(key);
-            totSize++;
-            return;
-          }
-          nowNode = nowNode.left;
-          break;
-        case 0:
-          nowNode.increaseFrequency();
-          return;
-        case 1:
-          if(nowNode.right == null){
-            nowNode.right = new Node(key);
-            totSize++;
-            return;
-          }
-          nowNode = nowNode.right;
+  // return nextNode
+  // if there are no nextNode, make node or increase frequency
+  protected Node getNextNode(Node node, String key){
+    int flag = key.compareTo(node.getKey());
+    if(flag < 0){
+      if(node.left == null){
+        node.left = makeNewNode(key);
+        return null;
       }
+      return node.left;
+    }else if(flag > 0){
+      if(node.right == null){
+        node.right = makeNewNode(key);
+        return null;
+      }
+      return node.right;
+    }else{
+      increaseFrequency(node);
+      return null;
     }
   }
+
+  //inserting key
+  public void insert(String key) {
+    System.out.println(key);
+    // check root is null
+    if(root == null){
+      root = makeNewNode(key);
+      return;
+    }
+    
+    // find insert place
+    Node node = root;
+    while(node != null){
+      node = getNextNode(node, key);
+    }
+  }
+
+  //find key
   public boolean find(String key) {
-    Node nowNode=root;
-    while(nowNode != null){
-      switch(key.compareTo(nowNode.getKey())){
-        case -1:
-          nowNode = nowNode.left;
-          break;
-        case 1:
-          nowNode = nowNode.right;
-          break;
-        case 0:
-          return true;
-      }
+    Node node=root;
+    while(node != null){
+      
+      int flag = key.compareTo(node.key);
+      //System.out.println("find "+key+" : "+node.key + "    " + flag);
+      if(flag < 0) node = node.left;
+      else if(flag > 0) node = node.right;
+      else return true;
     }
     return false;
+  }
+
+
+  public int size() {
+    return totSize;
   }
 
   public int sumFreq() {
     return totFreq;
   }
-  public int sumProbes() { }
-  public int sumWeightedPath() { }
+  public int sumProbes() { return 1;}
+  public int sumWeightedPath() { return 1; }
   public void resetCounters() { }
 
   public void nobst() { }	// Set NOBSTified to true.
@@ -78,30 +91,5 @@ public class BST { // Binary Search Tree implementation
   public void print() {
 
   }
-
-}
-
-class Node {
-  private String key;
-  private int frequency, accessCnt;
-  public Node left, right;
-  public Node(String key){
-    this.key = key;
-    frequency = 1;
-    accessCnt = 0;
-    left = null;
-    right = null;
-  }
-  public String getKey(){
-    accessCnt++;
-    return key;
-  }
-  public int getFrequency(){
-    return frequency;
-  }
-  public void increaseFrequency(){
-    frequency++;
-  }
-
 
 }
