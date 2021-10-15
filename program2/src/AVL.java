@@ -1,90 +1,84 @@
-
 // AVL Binary Search Tree
 // Bongki Moon (bkmoon@snu.ac.kr)
-import java.util.Stack;
 
 public class AVL extends BST {
+    
     public AVL() {
+        super();
     }
 
     @Override
     public void insert(String key) {
-        if (root == null) {
-            root = makeNewNode(key);
+        updateFlag(true, true, false, true);
+
+        if(node == null){
+            node = new Node(key);
             return;
         }
+        
+        int flag = key.compareTo(node.key);
+        if(flag == 0){
+            node.frequency += 1;
+        }else if(flag > 0){
+            if(right == null) right = new AVL();
+            right.insert(key);
+            if(height(right) - height(left) == 2){
+                if(key.compareTo(right.node.key) >= 0) rotateLeft();
+                else rotateRightLeft();
+            }
 
-        Stack<Node> stk = new Stack<>();
-        Node node = root;
-        while (node != null) {
-            stk.push(node);
-            node = getNextNode(node, key);
+        }else{
+            if(left == null) left = new AVL();
+            left.insert(key);
+            if(height(left)-height(right) == 2){
+                if(key.compareTo(left.node.key) <= 0) rotateRight();
+                else rotateLeftRight();
+            }
         }
-        resolveStack(stk);
+        refreshHeight();
+        
     }
 
-    private void resolveStack(Stack<Node> stk) {
-        Node node;
-        while (!stk.empty()) {
-            node = stk.peek();
-            stk.pop();
-            rebalanceNode(node);
-        }
+    private void rotateRight() {
+        Node nodeS = node;
+        Node nodeX = left.node;
+        BST S = new AVL();
+
+        S.node = nodeS;
+        S.left = left.right;
+        S.right = right;
+        S.refresh();
+
+        node = nodeX;
+        left = left.left;
+        right = S;
+        refresh();
     }
 
-    private void rebalanceNode(Node node) {
-        node.refreshHeight();
-        if (node.bf == 2) {
-            if (node.left.bf == -1)
-                rotateLeftRight(node);
-            else
-                rotateRight(node);
-        } else if (node.bf == -2) {
-            if (node.right.bf == 1)
-                rotateRightLeft(node);
-            else
-                rotateLeft(node);
-        }
+    private void rotateLeft() {
+        Node nodeS = node;
+        Node nodeX = right.node;
+        BST S = new AVL();
+
+        S.node = nodeS;
+        S.left = left;
+        S.right = right.left;
+        S.refresh();
+
+        node = nodeX;
+        left = S;
+        right = right.right;
+        refresh();
     }
 
-    private void rotateRight(Node node) {
-        Node S = Node.clone(node);
-        Node X = Node.clone(node.left);
-        Node B = Node.clone(node.left.right);
-        Node C = Node.clone(node.right);
-
-        node.assignNode(X);
-        node.right = S;
-        node.right.left = B;
-        node.right.right = C;
-
-        node.right.refreshHeight();
-        node.refreshHeight();
+    private void rotateLeftRight() {
+        ((AVL)left).rotateLeft();
+        rotateRight();
     }
 
-    private void rotateLeft(Node node) {
-        Node S = Node.clone(node);
-        Node X = Node.clone(node.right);
-        Node A = Node.clone(node.left);
-        Node B = Node.clone(node.right.left);
-
-        node.assignNode(X);
-        node.left = S;
-        node.left.left = A;
-        node.left.right = B;
-
-        node.left.refreshHeight();
-        node.refreshHeight();
-    }
-
-    private void rotateLeftRight(Node node) {
-        rotateLeft(node.left);
-        rotateRight(node);
-    }
-
-    private void rotateRightLeft(Node node) {
-        rotateRight(node.right);
-        rotateLeft(node);
+    private void rotateRightLeft() {
+        ((AVL)right).rotateRight();
+        rotateLeft();
     }
 
 }
