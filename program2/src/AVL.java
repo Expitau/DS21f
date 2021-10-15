@@ -13,6 +13,7 @@ public class AVL extends BST {
 
         if(node == null){
             node = new Node(key);
+            refreshHeight();
             return;
         }
         
@@ -26,7 +27,6 @@ public class AVL extends BST {
                 if(key.compareTo(right.node.key) > 0) rotateLeft();
                 else rotateRightLeft();
             }
-
         }else{
             if(left == null) left = new AVL();
             left.insert(key);
@@ -36,7 +36,6 @@ public class AVL extends BST {
             }
         }
         refreshHeight();
-        
     }
 
     private void rotateRight() {
@@ -58,7 +57,7 @@ public class AVL extends BST {
     private void rotateLeft() {
         Node nodeS = node;
         Node nodeX = right.node;
-        BST S = new AVL();
+        AVL S = new AVL();
 
         S.node = nodeS;
         S.left = left;
