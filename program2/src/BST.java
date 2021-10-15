@@ -212,7 +212,7 @@ public class BST { // Binary Search Tree implementation
             costTable[i][i] = weightSum[i]-weightSum[i-1];
         }
         for(int i=1; i<n; i++){ // j == i+1
-            if(costTable[i][i] > costTable[i+1][i+1]){
+            if(costTable[i][i] >= costTable[i+1][i+1]){
                 rootTable[i][i+1] = i;
                 costTable[i][i+1] = costTable[i+1][i+1] + weightSum[i+1] - weightSum[i-1];
             }else{
