@@ -11,18 +11,18 @@ class TestBst {
             System.exit(0);
         }
 
-        String fileName = "1000words.txt";
-        String keyFileName = "2000words.txt";
-        //BST bst = new BST();
-        //buildBST(bst, "./program2/public/"+fileName);
+        String fileName = "sawyer.txt";
+        String keyFileName = "sawyer.txt";
+        BST bst = new BST();
+        buildBST(bst, "./program2/public/"+fileName);
         AVL avl = new AVL();
         buildBST(avl, "./program2/public/"+fileName);
-        //System.out.println(
-        //        "Number of words in the BST: " + bst.size() + " (number of insertions: " + bst.sumFreq() + ")");
+        System.out.println(
+                "Number of words in the BST: " + bst.size() + " (number of insertions: " + bst.sumFreq() + ")");
 
-        //System.out.println("Sum of Weighted Path Lengths (BST): " + bst.sumWeightedPath());
-        //bst.resetCounters();
-        //probeBST(bst, "./program2/public/"+fileName);
+        System.out.println("Sum of Weighted Path Lengths (BST): " + bst.sumWeightedPath());
+        bst.resetCounters();
+        probeBST(bst, "./program2/public/"+fileName);
 
         System.out.println("Sum of Weighted Path Lengths (AVL): " + avl.sumWeightedPath());
         avl.resetCounters();

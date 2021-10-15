@@ -16,7 +16,7 @@ class Node{
     }
 
     public String toString(){
-        return String.format("[%s:%d:%d] %d", key, frequency, probe, height);
+        return String.format("[%s:%d:%d]", key, frequency, probe);
     }
 
     public void assign(Node node){

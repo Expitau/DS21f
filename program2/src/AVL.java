@@ -23,7 +23,7 @@ public class AVL extends BST {
             if(right == null) right = new AVL();
             right.insert(key);
             if(height(right) - height(left) == 2){
-                if(key.compareTo(right.node.key) >= 0) rotateLeft();
+                if(key.compareTo(right.node.key) > 0) rotateLeft();
                 else rotateRightLeft();
             }
 
@@ -31,7 +31,7 @@ public class AVL extends BST {
             if(left == null) left = new AVL();
             left.insert(key);
             if(height(left)-height(right) == 2){
-                if(key.compareTo(left.node.key) <= 0) rotateRight();
+                if(key.compareTo(left.node.key) < 0) rotateRight();
                 else rotateLeftRight();
             }
         }

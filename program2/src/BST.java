@@ -135,7 +135,7 @@ public class BST { // Binary Search Tree implementation
     public void print() {
         if(left != null) left.print();
         if(node != null){
-            if(this instanceof AVL) System.out.printf("%d %d   ", height(left), height(right));
+            //if(this instanceof AVL) System.out.printf("%d %d   ", height(left), height(right));
             System.out.println(node);
         }
         if(right != null) right.print();
