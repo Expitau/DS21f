@@ -1,3 +1,6 @@
+import java.util.Queue;
+import java.util.Stack;
+import java.util.LinkedList;
 // (Nearly) Optimal Binary Search Tree
 // Bongki Moon (bkmoon@snu.ac.kr)
 
@@ -5,180 +8,155 @@ public class BST { // Binary Search Tree implementation
 
     protected boolean NOBSTified = false;
     protected boolean OBSTified = false;
-
-    protected Node node;
-    protected BST left, right;
-    private Integer totSize, totFreq, totProbes, totWeightedPath;
+    protected Node root;
+    protected int totSize, totFreq, totProbe;
 
     public BST() {
-        totSize = 1;
-        totFreq = 1;
+        root = null;
+        totSize = 0;
+        totFreq = 0;
+    }
+
+    // Tree node operation
+    protected Node makeNewNode(String key) {
+        totSize += 1;
+        totFreq += 1;
+        return new Node(key);
+    }
+
+    protected void increaseFrequency(Node node) {
+        totFreq += 1;
+        node.frequency += 1;
+    }
+
+    protected void increaseProbe(Node node){
+        totProbe += 1;
+        node.probe += 1;
+    }
+
+    // return nextNode
+    // if there are no nextNode, make node or increase frequency
+    protected Node getNextNode(Node node, String key) {
+        int flag = key.compareTo(node.key);
+        if (flag < 0) {
+            if (node.left == null) {
+                node.left = makeNewNode(key);
+                return null;
+            }
+            return node.left;
+        } else if (flag > 0) {
+            if (node.right == null) {
+                node.right = makeNewNode(key);
+                return null;
+            }
+            return node.right;
+        } else {
+            increaseFrequency(node);
+            return null;
+        }
     }
 
     // inserting key
     public void insert(String key) {
-        updateFlag(true, true, false, true);
-        if (node == null) {
-            node = new Node(key);
-            refreshHeight();
+        if (root == null) {
+            root = makeNewNode(key);
             return;
-        } else {
-            int flag = key.compareTo(node.key);
-            if (flag == 0) {
-                node.frequency += 1;
-            } else if (flag < 0) {
-                if (left == null)
-                    left = new BST();
-                left.insert(key);
-            } else {
-                if (right == null)
-                    right = new BST();
-                right.insert(key);
-            }
         }
-        refreshHeight();
+
+        Node node = root;
+        Stack<Node> stk = new Stack<>();
+        while (node != null) {
+            stk.push(node);
+            node = getNextNode(node, key);
+        }
+        resolveStack(stk);
     }
+
+    private void resolveStack(Stack<Node> stk){
+        Node node;
+        while(!stk.empty()){
+          node = stk.peek(); stk.pop();
+          node.refreshHeight();;
+        }
+      }
 
     // find key
     public boolean find(String key) {
-        updateFlag(false, false, true, false);
-        if (node != null) {
-            node.probe += 1;
+        Node node = root;
+        while (node != null) {
+            increaseProbe(node);
             int flag = key.compareTo(node.key);
-            if (flag == 0)
+            if (flag < 0)
+                node = node.left;
+            else if (flag > 0)
+                node = node.right;
+            else
                 return true;
-            else if (flag < 0) {
-                if (left != null)
-                    return left.find(key);
-            } else {
-                if (right != null)
-                    return right.find(key);
-            }
         }
         return false;
     }
 
-    public void updateFlag(boolean sz, boolean fr, boolean pr, boolean wp) {
-        if (sz)
-            totSize = null;
-        if (fr)
-            totFreq = null;
-        if (pr)
-            totProbes = null;
-        if (wp)
-            totWeightedPath = null;
-    }
-
-    // Tree status
     public int size() {
-        if (totSize == null) {
-            if (node != null)
-                totSize = 1;
-            else
-                totSize = 0;
-
-            if (left != null)
-                totSize += left.size();
-            if (right != null)
-                totSize += right.size();
-        }
-        return (int) totSize;
+        return totSize;
     }
 
     public int sumFreq() {
-        if (totFreq == null) {
-            if (node != null)
-                totFreq = node.frequency;
-            else
-                totFreq = 0;
-
-            if (left != null)
-                totFreq += left.sumFreq();
-            if (right != null)
-                totFreq += right.sumFreq();
-        }
-        return (int) totFreq;
+        return totFreq;
     }
 
     public int sumProbes() {
-        if (totProbes == null) {
-            if (node != null)
-                totProbes = node.probe;
-            else
-                totProbes = 0;
-
-            if (left != null)
-                totProbes += left.sumProbes();
-            if (right != null)
-                totProbes += right.sumProbes();
-        }
-        return (int) totProbes;
+        return totProbe;
     }
 
     public int sumWeightedPath() {
-        if (totWeightedPath == null) {
-            totWeightedPath = sumFreq();
-            if (left != null)
-                totWeightedPath += left.sumWeightedPath();
-            if (right != null)
-                totWeightedPath += right.sumWeightedPath();
+        Queue<Node> que = new LinkedList<>();
+        Queue<Integer> depthQue = new LinkedList<>();
+        que.add(root);
+        depthQue.add(1);
+        int ret = 0;
+        while(!que.isEmpty()){
+            Node node = que.poll(); 
+            int depth = depthQue.poll();
+            ret += depth * node.frequency;
+            if(node.left != null){
+                que.add(node.left);
+                depthQue.add(depth+1);
+            }
+            if(node.right != null){
+                que.add(node.right);
+                depthQue.add(depth+1);
+            }
         }
-        return (int) totWeightedPath;
+        return ret;
     }
 
     public void resetCounters() {
-        updateFlag(false, true, true, true);
-
-        node.frequency = 0;
-        node.probe = 0;
-        if (left != null)
-            left.resetCounters();
-        if (right != null)
-            right.resetCounters();
-    }
-
-    public void refresh() {
-        updateFlag(true, true, true, true);
-        refreshHeight();
-        size();
-        sumFreq();
-        sumProbes();
-        sumWeightedPath();
-    }
-
-    public void refreshHeight() {
-        node.height = Math.max(height(left), height(right)) + 1;
-    }
-
-    public static int height(BST bst) {
-        if (bst == null)
-            return 0;
-        return bst.node.height;
-    }
-
-    public void assign(BST bst) {
-        this.node = bst.node;
-        this.left = bst.left;
-        this.right = bst.right;
-        this.totSize = bst.totSize;
-        this.totFreq = bst.totFreq;
-        this.totProbes = bst.totProbes;
-        this.totWeightedPath = bst.totWeightedPath;
-    }
-
-    private static int fillNodesList(BST bst, Node[] nodes, int index) {
-        if (bst == null || bst.node == null)
-            return index;
-        index = fillNodesList(bst.left, nodes, index);
-        nodes[index++] = bst.node;
-        index = fillNodesList(bst.right, nodes, index);
-        return index;
+        totFreq = 0;
+        totProbe = 0;
+        Queue<Node> que = new LinkedList<>();
+        que.add(root);
+        while(!que.isEmpty()){
+            Node node = que.poll(); 
+            node.frequency = 0;
+            node.probe = 0;
+            if(node.left != null) que.add(node.left);
+            if(node.right != null) que.add(node.right);
+        }
     }
 
     private static Node[] getNodesList(BST bst) {
-        Node nodes[] = new Node[bst.size() + 1];
-        fillNodesList(bst, nodes, 1);
+        Node[] nodes = new Node[bst.size() + 1];
+        fillNodesList(bst.root, nodes, 1);
         return nodes;
+    }
+
+    private static int fillNodesList(Node node, Node[] nodes, int index) {
+        if (node == null)
+            return index;
+        index = fillNodesList(node.left, nodes, index);
+        nodes[index++] = node;
+        index = fillNodesList(node.right, nodes, index);
+        return index;
     }
 
     private static int[] getWeightSum(Node[] nodes) {
@@ -190,18 +168,16 @@ public class BST { // Binary Search Tree implementation
         return weightSum;
     }
 
-    public void nobst() { // Set NOBSTified to true.
+    public void nobst() {
         NOBSTified = true;
         Node[] nodes = getNodesList(this);
         int[] weightSum = getWeightSum(nodes);
-        assign(nobst(weightSum, nodes, 1, size()));
-    }
+        root = nobst(weightSum, nodes, 1, totSize);
+    } // Set NOBSTified to true.
 
-    private static BST nobst(int[] weightSum, Node[] nodes, int l, int r) {
+    private static Node nobst(int[] weightSum, Node[] nodes, int l, int r) {
         if (l > r)
             return null;
-
-        BST ret = new BST();
 
         int root = l, lastMin = weightSum[r] - weightSum[l];
         for (int i = l + 1; i <= r; i++) { // TODO.change to tenery search!!
@@ -211,20 +187,21 @@ public class BST { // Binary Search Tree implementation
                 lastMin = difference;
             }
         }
-
-        ret.node = nodes[root];
+        Node ret = new Node("");
+        ret.assignNode(nodes[root]);
         ret.left = nobst(weightSum, nodes, l, root - 1);
         ret.right = nobst(weightSum, nodes, root + 1, r);
-        ret.refresh();
+        ret.refreshHeight();
         return ret;
     }
 
-    public void obst() { // Set OBSTified to true.
+    public void obst() {
         OBSTified = true;
         Node[] nodes = getNodesList(this);
         int[] weightSum = getWeightSum(nodes);
         int[][] rootTable = getRootTable(this, nodes, weightSum);
-        assign(obst(nodes, rootTable, 1, size()));
+        root = obst(nodes, rootTable, 1, totSize);
+        //
     }
 
     private static int[][] getRootTable(BST bst, Node[] nodes, int[] weightSum) { // TODO. reduce time!!!!!!!!!
@@ -266,25 +243,24 @@ public class BST { // Binary Search Tree implementation
         return rootTable;
     }
 
-    private static BST obst(Node[] nodes, int[][] rootTable, int l, int r) {
+    private static Node obst(Node[] nodes, int[][] rootTable, int l, int r) {
         if (l > r)
             return null;
-        BST ret = new BST();
+        Node ret = new Node("");
         int root = rootTable[l][r];
-        ret.node = nodes[root];
+        ret.assignNode(nodes[root]);
         ret.left = obst(nodes, rootTable, l, root - 1);
         ret.right = obst(nodes, rootTable, root + 1, r);
-        ret.refresh();
+        ret.refreshHeight();
         return ret;
     }
-
     public void print() {
-        if (left != null)
-            left.print();
-        if (node != null)
-            System.out.println(node);
-        if (right != null)
-            right.print();
+        Node[] nodes = getNodesList(this);
+        for(int i=1; i<=totSize; i++){
+            System.out.println(nodes[i]);    
+        }
     }
+
+
 
 }

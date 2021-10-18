@@ -12,9 +12,9 @@ class TestBst {
             System.exit(0);
         }
 
-        String path = "";// "./program2/public/";
-        String fileName = "mohicans.txt";
-        String keyFileName = "mohicans.txt";
+        String path =  "./program2/public/";//"";//
+        String fileName = "10words.txt";
+        String keyFileName = "10words.txt";
 
         // construct bsts
         BST nobst = new BST();
