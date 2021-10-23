@@ -13,8 +13,8 @@ class TestBst {
         }
 
         String path =  "./program2/public/";//"";//
-        String fileName = "10words.txt";
-        String keyFileName = "10words.txt";
+        String fileName = "1000words.txt";
+        String keyFileName = "2000words.txt";
 
         // construct bsts
         BST nobst = new BST();

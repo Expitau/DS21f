@@ -180,13 +180,25 @@ public class BST { // Binary Search Tree implementation
             return null;
 
         int root = l, lastMin = weightSum[r] - weightSum[l];
-        for (int i = l + 1; i <= r; i++) { // TODO.change to tenery search!!
+        
+        int s = l+1, e = r;
+        while(s < e){
+            int m = (s+e+1)/2;
+            if(weightSum[m-1] - weightSum[l-1] <= weightSum[r] - weightSum[m]){
+                s = m;
+            }else{
+                e = m-1;
+            }
+        }
+        
+        for (int i = s; i <= Math.min(r, s+1); i++) {
             int difference = Math.abs((weightSum[i - 1] - weightSum[l - 1]) - (weightSum[r] - weightSum[i]));
             if (difference < lastMin) { // until right is heavier
                 root = i;
                 lastMin = difference;
             }
         }
+
         Node ret = new Node("");
         ret.assignNode(nodes[root]);
         ret.left = nobst(weightSum, nodes, l, root - 1);
@@ -201,7 +213,6 @@ public class BST { // Binary Search Tree implementation
         int[] weightSum = getWeightSum(nodes);
         int[][] rootTable = getRootTable(this, nodes, weightSum);
         root = obst(nodes, rootTable, 1, totSize);
-        //
     }
 
     private static int[][] getRootTable(BST bst, Node[] nodes, int[] weightSum) { // TODO. reduce time!!!!!!!!!
@@ -223,21 +234,18 @@ public class BST { // Binary Search Tree implementation
             }
         }
 
-        for (int k = 2; k < n; k++) {
-            for (int i = 1; i + k <= n; i++) {
-                int j = i + k;
-                int root = rootTable[i][j - 1];
-                int minCost = costTable[i][root - 1] + costTable[root + 1][j];
-
-                for (int r = rootTable[i][j - 1]; r <= rootTable[i + 1][j]; r++) {
-                    if (costTable[i][r - 1] + costTable[r + 1][j] < minCost) {
-                        minCost = costTable[i][r - 1] + costTable[r + 1][j];
+        for(int low = n; low >= 1; low--){
+            for(int high=low+2; high <=n; high++){
+                int root = rootTable[low][high - 1];
+                int minCost = costTable[low][root - 1] + costTable[root + 1][high];
+                for(int r = rootTable[low][high-1]; r <= rootTable[low+1][high]; r++){
+                    if (costTable[low][r - 1] + costTable[r + 1][high] < minCost) {
+                        minCost = costTable[low][r - 1] + costTable[r + 1][high];
                         root = r;
                     }
                 }
-
-                rootTable[i][j] = root;
-                costTable[i][j] = minCost + weightSum[j] - weightSum[i - 1];
+                rootTable[low][high] = root;
+                costTable[low][high] = minCost + weightSum[high] - weightSum[low - 1];
             }
         }
         return rootTable;
