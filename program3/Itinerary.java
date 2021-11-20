@@ -29,8 +29,8 @@ public class Itinerary
   }
 
   public String toString(){
-    String ret = String.format("Source:%s Destination:%s Start_time:%s\n", start, end, departure);
-    for(Flight flight : flights) ret.concat(flight.toString());
+    String ret = "";
+    for(Flight flight : flights) ret += flight.toString();
     return ret;
   }
 

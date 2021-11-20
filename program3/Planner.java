@@ -35,7 +35,7 @@ public class Planner {
       Integer e = code2Int.get(flight.end);
       Time d = flight.departure;
       Time a = flight.arrival;
-      if(d.compareTo(a) <= 0) a.addD(1);
+      if(d.compareTo(a) >= 0) a.addD(1);
       graph.addEdge(s, e, d, a, flight);
     }
   }
@@ -48,7 +48,7 @@ public class Planner {
   }
 
   private void pushDist(PriorityQueue<DistData> pq, ArrayList<DistData> dist, Integer now, Integer next, Time time, Flight flight){
-      if(dist.get(next).time.compareTo(time) < 0) return;
+      if(dist.get(next).time.compareTo(time) <= 0) return;
       dist.set(next, new DistData(now, time, flight));
       pq.add(new DistData(next,time));
   }
@@ -62,12 +62,18 @@ public class Planner {
 
       while(!pq.isEmpty()){
           DistData now = pq.poll(); // return top and delete value
+          if(dist.get(now.airport).time.compareTo(now.time) < 0) continue;
+          if(now.airport == ed) break;
+          
           for(Edge edge : graph.getEdge(now.airport)){
               Integer next = edge.next;
               Time arrive = new Time(edge.arrive);
               Time departure = new Time(edge.departure);
-              arrive.add(connectTimeList.get(next));
               arrive.addD(Time.getDelayDay(now.time, departure));
+              departure.addD(Time.getDelayDay(now.time, departure));
+              if(next != ed) arrive.add(connectTimeList.get(next));
+              
+              //System.out.println("next : " + int2Code.get(next) + " " + departure + " " + arrive);
               pushDist(pq, dist, now.airport, next, arrive, edge.flight);
           }
       }
@@ -77,10 +83,10 @@ public class Planner {
 
   private Itinerary getItinerary(Integer st, Integer ed, Time departure, List<DistData> dist){
       Integer now = ed;
-      if(dist.get(now).time.d == -1) return new Itinerary(); 
+      if(dist.get(now).airport == -1) return new Itinerary(); 
 
       Itinerary ret = new Itinerary(int2Code.get(st), int2Code.get(ed), departure, dist.get(now).time);
-      while(now != -1){
+      while(dist.get(now).airport != -1){
           ret.addFront(dist.get(now).flight);
           now = dist.get(now).airport;
       }

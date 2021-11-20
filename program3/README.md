@@ -43,13 +43,28 @@ public void print()
 
 ## Planner class
 
+private TreeMap<String, Integer> code2Int = new TreeMap<>();
+private ArrayList<String> int2Code = new ArrayList<>();
+private ArrayList<Integer> connectTimeList = new ArrayList<>();
+
 public Planner(LinkedList<Airport> portList, LinkedList<Flight> fltList){
-    mapAirportCode(portList);
-    makeGraph(fltList);
+    mapAirportCode(portList); // Planner 에서 Map을 이용해서 Airport code -> Integer간의 관계 정립...
+    makeGraph(fltList); // Graph fltList를 이용해 Graph class를 생성.
 }
 
-Planner 에서 Map을 이용해서 Airport code -> Integer간의 관계 정립... (In
-Graph fltList를 이용해 Graph class를 생성. 이떄, fltList의 code를 Integer로 변환 시켜주는 로직 필요... (어디서 처리할지는 미정.)
+private mapAirportCode(LinkedList<Airport> portList){
+    int n = portList.length();
+    
+    connectTimeList = new ArrayList<>();
+    TreeMap<String, Integer> code2Int = new TreeMap<>();
+    ArrayList<String> int2Code = new ArrayList<>();
+
+    for(Airport airport : portList){
+        int2Code.add(airport.code);
+        connectTimeList.add(airport.time);
+        
+    }
+}
 
 public Itinerary Schedule(String start, String end, String departure){
     Integer st = code2Int.get(start), ed = code2Int.get(end);
@@ -57,13 +72,13 @@ public Itinerary Schedule(String start, String end, String departure){
     return getItineraray(st, ed, dist);
 }
 
-void pushDist(PriorityQueue pq, List<DistData> dist, Integer now, Integer next, Time time){
+private void pushDist(PriorityQueue pq, List<DistData> dist, Integer now, Integer next, Time time){
     if(dist[airport].time <= time) return;
     dist[airport] = new DistDat(now, time);
     pq.push(new Distdata(next,time));
 }
 
-List<DistData> getDist(Integer st, Integer ed, Time departure){
+private List<DistData> getDist(Integer st, Integer ed, Time departure){
     PriorityQueue pq = new ...;
     List<DistData> dist = new ArrayList<DistData>
 
@@ -85,9 +100,11 @@ List<DistData> getDist(Integer st, Integer ed, Time departure){
     return dist;
 }
 
-return getItineraray(Integer st, Integer ed, List<DistData> dist){
+private Itineraray getItineraray(Integer st, Integer ed, List<DistData> dist){
     Integer now = ed;
     Itineraray ret = new ....;
+
+    if(dist[now].time == null) return ret; 
 
     while(now != -1){
         ret.add(now, dist[now].time);

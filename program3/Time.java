@@ -29,6 +29,7 @@ public class Time implements Comparable<Time>{
     @Override
     public int compareTo(Time t){
         if(t.d == -1 && t.h == -1 && t.m == -1) return -1;
+        if(d == -1 && h == -1 && m == -1) return 1;
         if(d != t.d) return Integer.compare(d, t.d);
         if(h != t.h) return Integer.compare(h, t.h);
         return Integer.compare(m, t.m);
@@ -55,5 +56,8 @@ public class Time implements Comparable<Time>{
         
         return t2.d - nowD;
     }
-
+    
+    public String toString(){
+        return String.format("%02d%02d", h, m);
+    }
 }
