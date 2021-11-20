@@ -42,6 +42,8 @@ public class Planner {
 
   public Itinerary Schedule(String start, String end, String departure){
       Integer st = code2Int.get(start), ed = code2Int.get(end);
+      if(st == null || ed == null) return new Itinerary();
+      
       Time dep = Time.parseTime(departure);
       List<DistData> dist = getDist(st, ed, dep);
       return getItinerary(st, ed, dep, dist);
@@ -64,7 +66,7 @@ public class Planner {
           DistData now = pq.poll(); // return top and delete value
           if(dist.get(now.airport).time.compareTo(now.time) < 0) continue;
           if(now.airport == ed) break;
-          
+
           for(Edge edge : graph.getEdge(now.airport)){
               Integer next = edge.next;
               Time arrive = new Time(edge.arrive);
