@@ -3,7 +3,7 @@
 import java.util.*;
 
 public class Planner {
-    private int size;
+    private int V, E;
     private HashMap<String, Integer> code2Int;
     private ArrayList<String> int2Code;
     private ArrayList<Time> connectTimeList;
@@ -15,7 +15,7 @@ public class Planner {
     }
 
     private void mapAirportCode(LinkedList<Airport> portList) {
-        size = portList.size();
+        V = portList.size();
         connectTimeList = new ArrayList<>();
         code2Int = new HashMap<>();
         int2Code = new ArrayList<>();
@@ -29,7 +29,8 @@ public class Planner {
     }
 
     private void makeGraph(LinkedList<Flight> fltList) {
-        graph = new Graph(size);
+        E = fltList.size();
+        graph = new Graph(V);
         for (Flight flight : fltList) {
             Integer s = code2Int.get(flight.start);
             Integer e = code2Int.get(flight.end);
@@ -47,23 +48,67 @@ public class Planner {
             return new Itinerary();
 
         Time dep = Time.parseTime(departure);
-        DistData[] dist = getDist(st, ed, dep);
+        DistData[] dist;
+        if(E >= V*V) dist = getDist(st, ed, dep);
+        else dist = getDistNaive(st, ed, dep);
 
         return getItinerary(st, ed, dep, dist);
+    }
+
+    private void pushDistNaive(DistData[] dist, Integer now, Integer next, Time time, Flight flight){
+        if (dist[next].time.compareTo(time) <= 0) return;
+        dist[next] = new DistData(now, time, flight);
+    }
+
+    private DistData[] getDistNaive(Integer st, Integer ed, Time de){
+        DistData[] dist = new DistData[V];
+        Boolean[] S = new Boolean[V];
+
+        for (int i = 0; i < V; i++){
+            dist[i] = new DistData(Integer.valueOf(-1), new Time(-1, -1, -1));
+            S[i] = false;
+        }
+        
+        pushDistNaive(dist, -1, st, de, null);
+
+        for(int T=0; T<V; T++) {
+            Time time = new Time(-1, -1, -1);
+            int airport = V;
+            for(int i=0; i<V; i++){
+                if(S[i]) continue;
+                if(dist[i].time.compareTo(time) < 0) {
+                    time = dist[i].time; 
+                    airport = i;
+                }
+            }
+            S[airport] = true;
+
+            if (airport == ed)
+                break;
+
+            for (Edge edge : graph.getEdge(airport)) {
+                Integer next = edge.next;
+                Time arrive = Time.getNextTime(edge.arrive, edge.departure, time, connectTimeList.get(next), next == ed);
+                pushDistNaive(dist, airport, next, arrive, edge.flight);
+            }
+        }
+
+        return dist;
     }
 
     private void pushDist(PriorityQueue<DistData> pq, DistData[] dist, Integer now, Integer next, Time time,
             Flight flight) {
         if (dist[next].time.compareTo(time) <= 0)
             return;
+        pq.remove(new DistData(next, dist[next].time));
         dist[next] = new DistData(now, time, flight);
         pq.add(new DistData(next, time));
     }
 
     private DistData[] getDist(Integer st, Integer ed, Time de) {
         PriorityQueue<DistData> pq = new PriorityQueue<>();
-        DistData[] dist = new DistData[size];
-        for (int i = 0; i < size; i++)
+        DistData[] dist = new DistData[V];
+        for (int i = 0; i < V; i++)
             dist[i] = new DistData(Integer.valueOf(-1), new Time(-1, -1, -1));
 
         pushDist(pq, dist, -1, st, de, null);
@@ -77,13 +122,7 @@ public class Planner {
 
             for (Edge edge : graph.getEdge(now.airport)) {
                 Integer next = edge.next;
-                Time arrive = new Time(edge.arrive);
-                Time departure = new Time(edge.departure);
-                arrive.addD(Time.getDelayDay(now.time, departure));
-                departure.addD(Time.getDelayDay(now.time, departure));
-                if (next != ed)
-                    arrive.add(connectTimeList.get(next));
-
+                Time arrive = Time.getNextTime(edge.arrive, edge.departure, now.time, connectTimeList.get(next), next == ed);
                 pushDist(pq, dist, now.airport, next, arrive, edge.flight);
             }
         }

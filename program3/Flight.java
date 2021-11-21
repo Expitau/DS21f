@@ -3,6 +3,7 @@
 public class Flight {
   String start, end;
   Time departure, arrival;
+  String orgD, orgA;
 
   // constructor
   public Flight(String src, String dest, String stime, String dtime) {
@@ -10,14 +11,16 @@ public class Flight {
     this.end = dest;
     this.departure = Time.parseTime(stime);
     this.arrival = Time.parseTime(dtime);
+    this.orgD = stime;
+    this.orgA = dtime;
   }
 
   public String toString() {
-    return String.format("[%s->%s:%s->%s]", start, end, departure, arrival);
+    return "[" + start + "->" + end + ":" + orgD + "->" + orgA + "]";
   }
 
   public void print() {
-    System.out.println(this);
+    System.out.println(toString());
   }
 
 }

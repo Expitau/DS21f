@@ -20,15 +20,12 @@ public class Itinerary
     hasValue = true;
   }
 
-  public String toString(){
-    String ret = "";
-    if(hasValue) for(Flight flight : flights) ret += flight.toString();
-    else ret = "No Flight Schedule Found.";
-    return ret;
-  }
-
   public void print() {
-    System.out.println(this);
+    if(hasValue){
+      for(Flight flight : flights) System.out.print(flight.toString());
+      System.out.println("");
+    }
+    else System.out.println("No Flight Schedule Found.");
   }
 
 }

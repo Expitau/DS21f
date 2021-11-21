@@ -1,6 +1,5 @@
 public class Time implements Comparable<Time> {
     public Integer d, h, m;
-    public String originalCode;
 
     public Time(int d, int h, int m) {
         this.d = d;
@@ -8,18 +7,10 @@ public class Time implements Comparable<Time> {
         this.m = m;
     }
 
-    public Time(int d, int h, int m, String c) {
-        this.d = d;
-        this.h = h;
-        this.m = m;
-        this.originalCode = c;
-    }
-
     public Time(Time t) {
         this.d = t.d;
         this.h = t.h;
         this.m = t.m;
-        this.originalCode = t.originalCode;
     }
 
     private void uniformize() {
@@ -35,7 +26,7 @@ public class Time implements Comparable<Time> {
         Integer timeString = Integer.parseInt(str);
         if (timeString >= 2400)
             timeString -= 2400;
-        return new Time(0, timeString / 100, timeString % 100, str);
+        return new Time(0, timeString / 100, timeString % 100);
     }
 
     @Override
@@ -74,9 +65,15 @@ public class Time implements Comparable<Time> {
         return t2.d - nowD;
     }
 
+    public static Time getNextTime(Time A, Time D, Time now, Time C, boolean fin){
+        Time arrive = new Time(A);
+        Time departure = new Time(D);
+        arrive.addD(Time.getDelayDay(now, departure));
+        if(!fin) arrive.add(C);
+        return arrive;
+    }
+
     public String toString() {
-        if (originalCode != null)
-            return originalCode;
         return String.format("%02d%02d", h, m);
     }
 }
