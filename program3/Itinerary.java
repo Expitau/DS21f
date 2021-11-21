@@ -3,21 +3,13 @@ import java.util.*;
 
 public class Itinerary
 {
-  private String start, end;
-  private Time departure, arrival;
   private LinkedList<Flight> flights = new LinkedList<>();
   public boolean hasValue = false;
-  // constructor
-  public Itinerary(){
-  }
 
-  public Itinerary(String st, String ed, Time d, Time a){
-    start = st;
-    end = ed;
-    departure = d;
-    arrival = a;
-    hasValue = true;
-  }
+  public Itinerary(){}
+
+  public Itinerary(boolean value){hasValue = value;}
+
 
   public boolean isFound() {
     return hasValue;
@@ -29,7 +21,6 @@ public class Itinerary
   }
 
   public String toString(){
-    
     String ret = "";
     if(hasValue) for(Flight flight : flights) ret += flight.toString();
     else ret = "No Flight Schedule Found.";
