@@ -74,8 +74,7 @@ public class Planner {
               arrive.addD(Time.getDelayDay(now.time, departure));
               departure.addD(Time.getDelayDay(now.time, departure));
               if(next != ed) arrive.add(connectTimeList.get(next));
-              
-              //System.out.println("next : " + int2Code.get(next) + " " + departure + " " + arrive);
+
               pushDist(pq, dist, now.airport, next, arrive, edge.flight);
           }
       }

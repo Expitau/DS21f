@@ -400,6 +400,6 @@
 [OMA->ORD:1200->1330][ORD->DEN:1540->1710]
 
 Failed to find a flight schedule for 0 out of 200 customers
-Elapsed times: 5 (millsec) for planning, 99 (millisec) for scheduling
+Elapsed times: 7 (millsec) for planning, 100 (millisec) for scheduling
 Memory consumption: 84557384 bytes
-Total CPU time consumed by the thread: 198 (millsec)
+Total CPU time consumed by the thread: 204 (millsec)

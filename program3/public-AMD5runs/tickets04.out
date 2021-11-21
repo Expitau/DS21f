@@ -200,6 +200,6 @@
 [JHM->ITO:0758->1038]
 
 Failed to find a flight schedule for 0 out of 100 customers
-Elapsed times: 2 (millsec) for planning, 13 (millisec) for scheduling
-Memory consumption: 26424192 bytes
-Total CPU time consumed by the thread: 77 (millsec)
+Elapsed times: 2 (millsec) for planning, 12 (millisec) for scheduling
+Memory consumption: 21139352 bytes
+Total CPU time consumed by the thread: 75 (millsec)
