@@ -32,7 +32,7 @@ public class Itinerary
     
     String ret = "";
     if(hasValue) for(Flight flight : flights) ret += flight.toString();
-    else ret = "No Flight Schedule Found."
+    else ret = "No Flight Schedule Found.";
     return ret;
   }
 
