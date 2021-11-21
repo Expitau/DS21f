@@ -35,7 +35,7 @@ public class Planner {
       Integer e = code2Int.get(flight.end);
       Time d = flight.departure;
       Time a = flight.arrival;
-      if(d.compareTo(a) >= 0) a.addD(1);
+      if(d.compareTo(a) > 0) a.addD(1);
       graph.addEdge(s, e, d, a, flight);
     }
   }
