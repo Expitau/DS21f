@@ -46,7 +46,7 @@ public class MainAir {
         Planner planner = new Planner(airportList, flightList);
         planning = System.currentTimeMillis() - planning;
 
-        long scheduling = 0, temp;
+        long scheduling = System.currentTimeMillis();
         while (sfs.ready()) {
             String src = sfs.readWord();
             String dst = sfs.readWord();
@@ -54,16 +54,14 @@ public class MainAir {
 
             System.out.println(">> Source:" + src + " Destination:" + dst + " Start_Time:" + deptTime);
 
-            temp = System.currentTimeMillis();
             Itinerary ticket = planner.Schedule(src, dst, deptTime);
             if (ticket.isFound())
                 numItineraries++;
             numCustomers++;
         
             ticket.print();
-
-            scheduling += System.currentTimeMillis() - temp;
         }
+        scheduling = System.currentTimeMillis() - scheduling;
 
         System.out.println();
         System.out.println("Failed to find a flight schedule for " + (numCustomers - numItineraries) + " out of "

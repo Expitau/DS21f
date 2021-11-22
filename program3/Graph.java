@@ -3,22 +3,22 @@ import java.util.*;
 public class Graph {
     public ArrayList<HashMap<Integer, ArrayList<Edge>>> adj;
     public int size;
-    private Boolean sorted[];
+    //private Boolean sorted[];
 
     public Graph(int size) {
         this.size = size;
         adj = new ArrayList<>(size);
-        sorted = new Boolean[size];
+        //sorted = new Boolean[size];
 
         for(int i=0; i<size; i++){
             adj.add(new HashMap<>());
-            sorted[i] = true;
+            //sorted[i] = true;
         }
         
     }
 
     public void addEdge(Integer s, Integer e, Time d, Time a, Flight f) {
-        sorted[s] = false;
+        //sorted[s] = false;
 
         if(adj.get(s).get(e) == null) adj.get(s).put(e, new ArrayList<Edge>());
         adj.get(s).get(e).add(new Edge(s, e, d, a, f));
@@ -49,7 +49,7 @@ public class Graph {
             }
             adj.get(s).put(e, edgeList);
         }
-        sorted[s] = true;
+        //sorted[s] = true;
     }
 
     private Edge getEdge(Integer s, Integer e, Time dep){
