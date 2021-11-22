@@ -49,8 +49,10 @@ public class Planner {
 
         Time dep = Time.parseTime(departure);
         DistData[] dist;
-        if(E >= V*V) dist = getDist(st, ed, dep);
-        else dist = getDistNaive(st, ed, dep);
+        //if(E < V*V)  dist = getDistNaive(st, ed, dep);
+        //else dist = getDistNaive(st, ed, dep);
+        
+        dist = getDist(st, ed, dep);
 
         return getItinerary(st, ed, dep, dist);
     }
@@ -86,7 +88,7 @@ public class Planner {
             if (airport == ed)
                 break;
 
-            for (Edge edge : graph.getEdge(airport)) {
+            for (Edge edge : graph.getEdgeList(airport, time)) {
                 Integer next = edge.next;
                 Time arrive = Time.getNextTime(edge.arrive, edge.departure, time, connectTimeList.get(next), next == ed);
                 pushDistNaive(dist, airport, next, arrive, edge.flight);
@@ -100,9 +102,9 @@ public class Planner {
             Flight flight) {
         if (dist[next].time.compareTo(time) <= 0)
             return;
-        pq.remove(new DistData(next, dist[next].time));
+        pq.remove(dist[next]);
         dist[next] = new DistData(now, time, flight);
-        pq.add(new DistData(next, time));
+        pq.add(dist[next]);
     }
 
     private DistData[] getDist(Integer st, Integer ed, Time de) {
@@ -113,17 +115,23 @@ public class Planner {
 
         pushDist(pq, dist, -1, st, de, null);
 
+        int airport;
+        Time time;
         while (!pq.isEmpty()) {
             DistData now = pq.poll(); // return top and delete value
-            if (dist[now.airport].time.compareTo(now.time) < 0)
+            try{airport = code2Int.get(now.flight.end);}
+            catch(NullPointerException e){airport = st;}
+            time = now.time;
+
+            if (dist[airport].time.compareTo(time) < 0)
                 continue;
-            if (now.airport == ed)
+            if (airport == ed)
                 break;
 
-            for (Edge edge : graph.getEdge(now.airport)) {
+            for (Edge edge : graph.getEdgeList(airport, time)) {
                 Integer next = edge.next;
-                Time arrive = Time.getNextTime(edge.arrive, edge.departure, now.time, connectTimeList.get(next), next == ed);
-                pushDist(pq, dist, now.airport, next, arrive, edge.flight);
+                Time arrive = Time.getNextTime(edge.arrive, edge.departure, time, connectTimeList.get(next), next == ed);
+                pushDist(pq, dist, airport, next, arrive, edge.flight);
             }
         }
 
