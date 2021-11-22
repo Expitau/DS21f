@@ -40,6 +40,7 @@ public class Planner {
                 a.addD(1);
             graph.addEdge(s, e, d, a, flight);
         }
+        graph.sortAllEdge();
     }
 
     public Itinerary Schedule(String start, String end, String departure) {
