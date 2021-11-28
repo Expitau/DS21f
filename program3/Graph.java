@@ -42,7 +42,10 @@ public class Graph {
 
             ArrayList<Edge> edgeList = new ArrayList<>();
             edgeList.add(orgEdgeList.get(0));
+            Time nextDay = new Time(edgeList.get(0).arrive);
+            nextDay.addD(1);
             for(Edge edge : orgEdgeList){
+                if(nextDay.compareTo(edge.arrive) <= 0) break;
                 if(edgeList.get(edgeList.size()-1).departure.compareTo(edge.departure) < 0){
                     edgeList.add(edge);
                 } 
@@ -58,6 +61,7 @@ public class Graph {
         
         Time d = new Time(dep);
         d.d = 0;
+        
 
         int l = 0, r = edges.size();
         while(l < r){
@@ -65,7 +69,8 @@ public class Graph {
             if (d.compareTo(edges.get(m).departure) <= 0)  r = m;
 		    else l = m + 1; 
         }
-        if(l == edges.size()) return edges.get(0);
+
+        if(l >= edges.size()) return edges.get(0);
         return edges.get(l);
     }
 
